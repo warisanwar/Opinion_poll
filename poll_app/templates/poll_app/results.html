@@ -1,0 +1,57 @@
+{% extends 'poll_app/base.html' %}
+
+{% block title %}Results{% endblock %}
+
+{% block main %}
+
+<h1 class="text-center">Results</h1>
+<hr />
+<div class=row>
+    <div class="col-md-6">
+        <h2 class="mb-5 text-center">{{ question.question_name }}</h2>
+        <ul class="list-group mb-5">
+            {% for choice in choices_order %}
+            <li class="list-group-item {% if forloop.first %}bg-warning{% endif %}">
+        
+                {{ choice.choice_name }}
+        
+                <span class="badge badge-success float-right">{{ choice.votes }}
+                    vote{{ choice.votes | pluralize }}</span>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="col-md-6">
+        <h2 class="mb-2 text-center">Pie Chart Visualisation</h2>
+        <canvas id="pie-chart"></canvas>
+    </div>
+</div>
+<hr />
+<a class="btn btn-secondary" href="{% url 'home' %}">Back To Polls</a>
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+<script>
+    var config = {
+        type: 'pie',
+        data: {
+        datasets: [{
+            data: {{ data| safe }},
+            backgroundColor: ['#ff0000', '#0000ff', '#ff0080', '#73ffff',],
+            label: 'Population'
+        }],
+        labels: {{ labels | safe }}
+},
+    options: {
+        responsive: true
+    }
+    };
+
+    window.onload = function () {
+        var ctx = document.getElementById('pie-chart').getContext('2d');
+        window.myPie = new Chart(ctx, config);
+    };
+</script>
+</script>
+
+{% endblock %}

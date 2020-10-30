@@ -1,0 +1,40 @@
+{% extends "poll_app/base.html" %}
+
+{% block title %}Homepage{% endblock %}
+
+{% block main %}
+{% if question_list %}
+<h1 class="text-center">Welcome to Poll Opinions</h1>
+<hr />
+<div class="row">
+    {% for question in question_list %}
+    <div class="col-sm-6 m-auto">
+        <div class="card mb-3">
+            <div class="card-body">
+                <h1 class="text-center mb-3">{{ question.question_name }}</h1>
+                <form action="{% url 'vote' question.id %}" method="post">
+                    {% csrf_token %}
+                    {% for choice in question.choice_set.all %}
+                    <div class="form-check">
+                        <input type="radio" name="choice" class="form-check-input" id="choice{{ choice.id }}"
+                            value="{{ choice.id }}" />
+                        <label for="choice{{ choice.id }}">{{ choice.choice_name }}</label>
+                    </div>
+                    {% endfor %}
+                    <input type="submit" value="Vote" class="btn btn-success btn-lg btn-block mt-4" />
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+{% if error_message %}
+<p class="alert alert-danger">
+    <strong>{{ error_message }}</strong>
+</p>
+<a class="btn btn-warning" href="{% url 'home' %}">Back To Polls</a>
+{% endif %}
+<p>No polls available</p>
+{% endif %}
+{% endblock %}
